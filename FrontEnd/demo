@@ -1,0 +1,77 @@
+from MUI I added App bar with responsive Menu
+
+then I edited it to add two features :
+1- theme btn in the main menu
+
+2- navigation for each item in the menu
+
+3- naviagtion to home when click on LOGO
+
+
+
+1- theme Btn in main menu :
+==============
+I add new menu item to the menu  then inser in it my favorite toggle Btn icon 
+and typography of Theme :
+
+1st:
+import { Brightness4, Brightness7 } from "@mui/icons-material";
+import { useTheme } from "@mui/material";
+
+2nd: I pass toggle btn as desribed before at Dark mode file
+function Header(props) {
+  const { toggleBtn } = props;
+
+3rd:
+in the return before fn:
+ const theme = useTheme();
+
+4th:
+     <MenuItem
+                onClick={() => {
+                  toggleBtn();
+                  handleCloseNavMenu();
+                }}
+              >
+                <Typography sx={{ textAlign: "center", mr: 1 }}>
+                  Theme
+                </Typography>
+                <IconButton color="inherit">
+                  {theme.palette.mode === "dark" ? (
+                    <Brightness7 sx={{ color: "orange" }} />
+                  ) : (
+                    <Brightness4 />
+                  )}
+                </IconButton>
+              </MenuItem>
+
+
+2- Navigation :
+==============
+
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate();
+
+
+{pages.map((page) => (
+              <Button
+                key={page}
+                onClick={() => {
+                  navigate(`/${page.toLowerCase()}`);
+                  handleCloseNavMenu();
+                }}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                {page}
+              </Button>
+            ))}
+
+as they saved at App.jsx like this :
+ <Route path="products" element={<Products />} />
+      <Route path="cart" element={<ShoppingCart />} />
+
+So : we have to add the slash and convert them to lower case
+also if ther is any space you can replace it with - 
+page.toLowerCase().replace(" " , "-")
+wich is allowed in writing a path at root.jsx
