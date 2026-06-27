@@ -19,6 +19,7 @@ import { Brightness4, Brightness7 } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
 // Navigation Menu
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const pages = ["Products", "Cart"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -53,6 +54,10 @@ function Header(props) {
 
   // Navigation Menu
   const navigate = useNavigate();
+
+  // Number of items in the cart
+  // @ts-ignore
+  const { selectedProducts } = useSelector((state) => state.cart);
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -120,7 +125,11 @@ function Header(props) {
                         sx={{ display: "flex", alignItems: "center", gap: 1 }}
                       >
                         <span>{page}</span>
-                        <Badge color="primary" badgeContent={0} showZero>
+                        <Badge
+                          color="primary"
+                          badgeContent={selectedProducts.length}
+                          showZero
+                        >
                           <ShoppingCartIcon />
                         </Badge>
                       </Box>
@@ -185,7 +194,11 @@ function Header(props) {
                 {page === "Cart" ? (
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <span>{page}</span>
-                    <Badge color="primary" badgeContent={0} showZero>
+                    <Badge
+                      color="primary"
+                      badgeContent={selectedProducts.length}
+                      showZero
+                    >
                       <ShoppingCartIcon />
                     </Badge>
                   </Box>

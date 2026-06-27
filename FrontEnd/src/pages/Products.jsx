@@ -11,10 +11,19 @@ import CircularWithValueLabel from "./CircularWithValueLabel";
 
 import { useGetproductsByNameQuery } from "../Redux/productsAPI";
 
+import { useDispatch } from "react-redux";
+import { addToCart } from "../Redux/cartSlice";
+
 const Products = () => {
+  const dispatch = useDispatch();
   // @ts-ignore
   const { data, error, isLoading } = useGetproductsByNameQuery();
 
+  // @ts-ignore
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+    console.log("Product added to cart:", product);
+  };
   if (isLoading) {
     return <CircularWithValueLabel />;
   }
@@ -42,6 +51,7 @@ const Products = () => {
             (
               // @ts-ignore
               product,
+              // @ts-ignore
               index,
             ) => (
               <Card key={index} sx={{ maxWidth: 345 }}>
@@ -78,6 +88,7 @@ const Products = () => {
                       padding: { xs: "7px 10px", sm: "10px 12px" },
                       lineHeight: 1,
                     }}
+                    onClick={() => handleAddToCart(product)}
                   >
                     Add to Cart
                   </Button>

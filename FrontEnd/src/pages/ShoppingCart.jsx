@@ -18,6 +18,8 @@ import Card from "@mui/material/Card";
 
 import Divider from "@mui/material/Divider";
 
+import { useSelector } from "react-redux";
+
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   textAlign: "center",
@@ -27,7 +29,12 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: "0 16px",
 }));
 const ShoppingCart = () => {
-  const selectedProducts = [{}, {}, {}, {}, {}, {}];
+  // const selectedProducts = [{}, {}, {}, {}, {}, {}];
+  //  const dispatch = useDispatch();
+  // @ts-ignore
+  const { selectedProducts } = useSelector((state) => state.cart);
+  /** @type {{ id: number, productName?: string, imageLink?: string, price?: number }[]} */
+  const cartItems = selectedProducts;
   return (
     <Box>
       <Container
@@ -42,14 +49,17 @@ const ShoppingCart = () => {
         }}
       >
         {/* map iterate Item */}
-        {selectedProducts.map((product, index) => (
+        {cartItems.map((product) => (
           <Item
-            key={index}
+            key={product.id}
             sx={{
-              display: "flex",
-              flexDirection: "row",
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "minmax(0, 1fr) auto auto auto",
+                md: "minmax(0, 1fr) 120px 70px 80px",
+              },
               alignItems: "center",
-              justifyContent: "space-between",
+              columnGap: { xs: 0.5, sm: 3 },
               width: "100%",
             }}
             elevation={3}
@@ -59,28 +69,33 @@ const ShoppingCart = () => {
             <Stack
               direction="row"
               spacing={{ xs: 1, sm: 2 }}
-              sx={{ alignItems: "center" }}
+              sx={{ alignItems: "center", minWidth: 0, justifySelf: "start" }}
             >
-              <Avatar alt="Remy Sharp" src="T-shirts/2.jpg" />
+              <Avatar
+                alt={product.productName}
+                src={product.imageLink || `T-shirts/${product.id}.jpg`}
+              />
               <Typography
                 variant="body1"
                 color="initial"
                 sx={{
                   textAlign: "left",
-                  whiteSpace: "nowrap",
+                  whiteSpace: "normal",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
+                  overflowWrap: "anywhere",
                 }}
               >
-                title
+                {product.productName}
               </Typography>
             </Stack>
             {/* Quantity */}
             {/* plus */}
             <Stack
               direction="row"
-              spacing={{ xs: 1.5, sm: 2 }}
-              sx={{ alignItems: "center" }}
+              spacing={{ xs: 1.4, sm: 2 }}
+              sx={{ alignItems: "center", justifySelf: "center" }}
+              className="quantity-stack"
             >
               <AddIcon
                 sx={{
@@ -102,9 +117,13 @@ const ShoppingCart = () => {
             <Typography
               variant="body1"
               color="initial"
-              sx={{ textAlign: "center" }}
+              sx={{
+                textAlign: "center",
+                justifySelf: "center",
+                px: { xs: 0.5, sm: 0 },
+              }}
             >
-              price
+              {product.price}
             </Typography>
             <DeleteOutlineOutlined
               sx={{
@@ -115,7 +134,10 @@ const ShoppingCart = () => {
             <Typography
               variant="body1"
               color="error"
-              sx={{ display: { xs: "none", sm: "block" } }}
+              sx={{
+                display: { xs: "none", sm: "block" },
+                justifySelf: "center",
+              }}
             >
               Delete
             </Typography>
