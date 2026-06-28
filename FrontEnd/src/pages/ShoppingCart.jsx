@@ -19,6 +19,17 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 
 import { useSelector } from "react-redux";
+// Cart Actions
+import { useDispatch } from "react-redux";
+
+import {
+  removeFromCart,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../Redux/cartSlice";
+
+/** @typedef {{ id: number, quantity: number, productName?: string, imageLink?: string, price?: number }} CartProduct */
+/** @typedef {{ cart: { selectedProducts: CartProduct[] } }} RootState */
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -31,10 +42,27 @@ const Item = styled(Paper)(({ theme }) => ({
 const ShoppingCart = () => {
   // const selectedProducts = [{}, {}, {}, {}, {}, {}];
   //  const dispatch = useDispatch();
-  // @ts-ignore
-  const { selectedProducts } = useSelector((state) => state.cart);
-  /** @type {{ id: number, productName?: string, imageLink?: string, price?: number }[]} */
+  const { selectedProducts } = useSelector(
+    /** @param {RootState} state */ (state) => state.cart,
+  );
+  /** @type {CartProduct[]} */
   const cartItems = selectedProducts;
+  const dispatch = useDispatch();
+
+  /** @param {CartProduct} product */
+  const handleRemoveFromCart = (product) => {
+    dispatch(removeFromCart(product));
+  };
+
+  /** @param {CartProduct} product */
+  const handleIncreaseQuantity = (product) => {
+    dispatch(increaseQuantity(product));
+  };
+
+  /** @param {CartProduct} product */
+  const handleDecreaseQuantity = (product) => {
+    dispatch(decreaseQuantity(product));
+  };
   return (
     <Box>
       <Container
@@ -102,15 +130,17 @@ const ShoppingCart = () => {
                   justifySelf: "center",
                   fontSize: { xs: "1rem", sm: "1.5rem" },
                 }}
+                onClick={() => handleIncreaseQuantity(product)}
               />
               {/* number on badge */}
-              <Badge color="primary" badgeContent={0} showZero />
+              <Badge color="primary" badgeContent={product.quantity} showZero />
               {/* minus */}
               <RemoveIcon
                 sx={{
                   justifySelf: "center",
                   fontSize: { xs: "1rem", sm: "1.5rem" },
                 }}
+                onClick={() => handleDecreaseQuantity(product)}
               />
             </Stack>
 
@@ -130,6 +160,7 @@ const ShoppingCart = () => {
                 justifySelf: "center",
                 display: { xs: "block", sm: "none" },
               }}
+              onClick={() => handleRemoveFromCart(product)}
             />
             <Typography
               variant="body1"
@@ -138,6 +169,7 @@ const ShoppingCart = () => {
                 display: { xs: "none", sm: "block" },
                 justifySelf: "center",
               }}
+              onClick={() => handleRemoveFromCart(product)}
             >
               Delete
             </Typography>

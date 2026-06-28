@@ -24,6 +24,9 @@ import { useSelector } from "react-redux";
 const pages = ["Products", "Cart"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
+/** @typedef {{ quantity?: number }} HeaderCartProduct */
+/** @typedef {{ cart: { selectedProducts: HeaderCartProduct[] } }} HeaderRootState */
+
 /**
  * @param {{ toggleBtn: () => void }} props
  */
@@ -56,8 +59,14 @@ function Header(props) {
   const navigate = useNavigate();
 
   // Number of items in the cart
-  // @ts-ignore
-  const { selectedProducts } = useSelector((state) => state.cart);
+  const { selectedProducts } = useSelector(
+    /** @param {HeaderRootState} state */ (state) => state.cart,
+  );
+  const totalSelectedItems = selectedProducts.reduce(
+    /** @param {number} sum @param {HeaderCartProduct} product */
+    (sum, product) => sum + (product.quantity || 0),
+    0,
+  );
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -126,8 +135,9 @@ function Header(props) {
                       >
                         <span>{page}</span>
                         <Badge
+                          className="products-quantity"
                           color="primary"
-                          badgeContent={selectedProducts.length}
+                          badgeContent={totalSelectedItems}
                           showZero
                         >
                           <ShoppingCartIcon />
@@ -196,7 +206,7 @@ function Header(props) {
                     <span>{page}</span>
                     <Badge
                       color="primary"
-                      badgeContent={selectedProducts.length}
+                      badgeContent={totalSelectedItems}
                       showZero
                     >
                       <ShoppingCartIcon />
