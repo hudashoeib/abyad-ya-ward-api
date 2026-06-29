@@ -1,29 +1,62 @@
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container, Stack } from "@mui/material";
 import React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+
 import CardActionArea from "@mui/material/CardActionArea";
 import CardActions from "@mui/material/CardActions";
 import CircularWithValueLabel from "./CircularWithValueLabel";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import Badge from "@mui/material/Badge";
 
 import { useGetproductsByNameQuery } from "../Redux/productsAPI";
 
 import { useDispatch } from "react-redux";
-import { addToCart } from "../Redux/cartSlice";
+import {
+  addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+} from "../Redux/cartSlice";
+// Selected Products
+import { useSelector } from "react-redux";
 
 const Products = () => {
   const dispatch = useDispatch();
   // @ts-ignore
   const { data, error, isLoading } = useGetproductsByNameQuery();
 
+  //Selected Products
+  const { selectedProducts } = useSelector(
+    /** @param {{ cart: { selectedProducts: any[] } }} state */ (state) =>
+      state.cart,
+  );
+  // @ts-ignore
+  const productQuantity = (itemAPI) => {
+    const productUser = selectedProducts.find(
+      (itemUser) => itemUser.id === itemAPI.id,
+    );
+    return productUser ? productUser.quantity : 0;
+  };
+
   // @ts-ignore
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
     console.log("Product added to cart:", product);
   };
+
+  // @ts-ignore
+  const handleIncreaseQuantity = (product) => {
+    dispatch(increaseQuantity(product));
+  };
+
+  // @ts-ignore
+  const handleDecreaseQuantity = (product) => {
+    dispatch(decreaseQuantity(product));
+  };
+
   if (isLoading) {
     return <CircularWithValueLabel />;
   }
@@ -79,7 +112,57 @@ const Products = () => {
                 <CardActions
                   sx={{ justifyContent: "space-between", padding: "23px" }}
                 >
-                  <Button
+                  {/* Switch Buttons (addTocart & Quantity) */}
+                  {/* Quantity */}
+                  {selectedProducts.some(
+                    (itemUser) => itemUser.id === product.id,
+                  ) ? (
+                    <Stack
+                      direction="row"
+                      spacing={{ xs: 1.4, sm: 2 }}
+                      sx={{ alignItems: "center", justifySelf: "center" }}
+                      className="quantity-stack"
+                    >
+                      <AddIcon
+                        sx={{
+                          justifySelf: "center",
+                          fontSize: { xs: "1rem", sm: "1.5rem" },
+                        }}
+                        onClick={() => handleIncreaseQuantity(product)}
+                      />
+                      {/* number on badge */}
+                      <Badge
+                        color="primary"
+                        badgeContent={productQuantity(product)}
+                        showZero
+                      />
+                      {/* minus */}
+                      <RemoveIcon
+                        sx={{
+                          justifySelf: "center",
+                          fontSize: { xs: "1rem", sm: "1.5rem" },
+                        }}
+                        onClick={() => handleDecreaseQuantity(product)}
+                      />
+                    </Stack>
+                  ) : (
+                    <Button
+                      size="small"
+                      color="primary"
+                      variant="contained"
+                      sx={{
+                        textTransform: "capitalize",
+                        padding: { xs: "7px 10px", sm: "10px 12px" },
+                        lineHeight: 1,
+                      }}
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Add to Cart
+                    </Button>
+                  )}
+
+                  {/* Add to cart Btn */}
+                  {/* <Button
                     size="small"
                     color="primary"
                     variant="contained"
@@ -91,7 +174,7 @@ const Products = () => {
                     onClick={() => handleAddToCart(product)}
                   >
                     Add to Cart
-                  </Button>
+                  </Button> */}
                   <Typography variant="body1" color="blue">
                     {product.price ? `${product.price} $` : "400 $"}
                   </Typography>

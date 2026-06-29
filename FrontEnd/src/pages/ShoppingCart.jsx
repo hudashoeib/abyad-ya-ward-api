@@ -117,8 +117,7 @@ const ShoppingCart = () => {
                 {product.productName}
               </Typography>
             </Stack>
-            {/* Quantity */}
-            {/* plus */}
+            {/*Product  Quantity */}
             <Stack
               direction="row"
               spacing={{ xs: 1.4, sm: 2 }}
