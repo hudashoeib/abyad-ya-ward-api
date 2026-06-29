@@ -33,13 +33,6 @@ const Products = () => {
     /** @param {{ cart: { selectedProducts: any[] } }} state */ (state) =>
       state.cart,
   );
-  // @ts-ignore
-  const productQuantity = (itemAPI) => {
-    const productUser = selectedProducts.find(
-      (itemUser) => itemUser.id === itemAPI.id,
-    );
-    return productUser ? productUser.quantity : 0;
-  };
 
   // @ts-ignore
   const handleAddToCart = (product) => {
@@ -133,7 +126,11 @@ const Products = () => {
                       {/* number on badge */}
                       <Badge
                         color="primary"
-                        badgeContent={productQuantity(product)}
+                        badgeContent={
+                          selectedProducts.find(
+                            (itemUser) => itemUser.id === product.id,
+                          ).quantity
+                        }
                         showZero
                       />
                       {/* minus */}
