@@ -13,9 +13,11 @@ import { useGetproductsByNameQuery } from "../Redux/productsAPI";
 
 import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   // @ts-ignore
   const { data, error, isLoading } = useGetproductsByNameQuery();
 
@@ -62,6 +64,7 @@ const Products = () => {
                     image={product.imageLink || `T-shirts/${index + 1}.jpg`}
                     alt={product.productName || `Product ${index + 1}`}
                     sx={{ objectFit: "contain", mt: "1rem" }}
+                    onClick={() => navigate(`/product-details/${product.id}`)}
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">

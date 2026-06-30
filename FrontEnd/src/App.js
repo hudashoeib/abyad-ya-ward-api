@@ -10,6 +10,7 @@ import Create from "./pages/Create";
 import NotFound from "./pages/NotFound";
 import Products from "./pages/Products";
 import ShoppingCart from "./pages/ShoppingCart";
+import ProductDetails from "./pages/ProductDetails/ProductDetails.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       {/* one of inner pages with also close tag */}
       <Route path="products" element={<Products />} />
       <Route path="cart" element={<ShoppingCart />} />
+      <Route path="product-details/:id" element={<ProductDetails />} />
 
       <Route path="*" element={<NotFound />} />
       {/* return you to home page if u write wrong link or extension */}
