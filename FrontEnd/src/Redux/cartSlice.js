@@ -5,7 +5,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 /** @type {CartState} */
 const initialState = {
-  selectedProducts: [],
+  // @ts-ignore
+  selectedProducts: JSON.parse(localStorage.getItem("cart")) || [],
 };
 
 export const cartSlice = createSlice({
@@ -29,6 +30,7 @@ export const cartSlice = createSlice({
       } else {
         state.selectedProducts.push({ ...incoming, quantity: 1 });
       }
+      localStorage.setItem("cart", JSON.stringify(state.selectedProducts));
     },
 
     removeFromCart: (state, action) => {
@@ -37,6 +39,7 @@ export const cartSlice = createSlice({
         // @ts-ignore
         (product) => product.id !== action.payload.id,
       );
+      localStorage.setItem("cart", JSON.stringify(state.selectedProducts));
     },
     increaseQuantity: (state, action) => {
       const itemById = state.selectedProducts.find(
@@ -44,6 +47,7 @@ export const cartSlice = createSlice({
       );
       if (!itemById) return;
       itemById.quantity += 1;
+      localStorage.setItem("cart", JSON.stringify(state.selectedProducts));
     },
     decreaseQuantity: (state, action) => {
       const itemById = state.selectedProducts.find(
@@ -57,6 +61,7 @@ export const cartSlice = createSlice({
           (product) => product.id !== action.payload.id,
         );
       }
+      localStorage.setItem("cart", JSON.stringify(state.selectedProducts));
     },
   },
 });

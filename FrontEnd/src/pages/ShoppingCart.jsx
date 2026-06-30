@@ -152,7 +152,7 @@ const ShoppingCart = () => {
                 px: { xs: 0.5, sm: 0 },
               }}
             >
-              {product.price}
+              {product.price}$
             </Typography>
             <DeleteOutlineOutlined
               sx={{
@@ -204,11 +204,16 @@ const ShoppingCart = () => {
               spacing={2}
               sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
-              <Typography gutterBottom variant="body2" component="div">
-                subTotal:
+              <Typography gutterBottom variant="body1" component="div">
+                Total:
               </Typography>
-              <Typography gutterBottom variant="body2" component="div">
-                $4.50
+              <Typography gutterBottom variant="body1" component="div">
+                {cartItems.reduce(
+                  (total, product) =>
+                    total + (product.price ?? 0) * (product.quantity ?? 0),
+                  0,
+                )}
+                $
               </Typography>
             </Stack>
           </Box>
