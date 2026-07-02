@@ -1,5 +1,5 @@
 import { Box, Button, Container, Stack } from "@mui/material";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -22,9 +22,17 @@ import {
 } from "../Redux/cartSlice";
 import { useNavigate } from "react-router-dom";
 
+/** @type {number[]} */
+const initialZeroBadgeIds = [];
+
+/** @type {Record<number, number>} */
+const initialZeroBadgeTimeouts = {};
+
 const Products = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [zeroBadgeIds, setZeroBadgeIds] = useState(initialZeroBadgeIds);
+  const zeroBadgeTimeoutsRef = useRef(initialZeroBadgeTimeouts);
   // @ts-ignore
   const { data, error, isLoading } = useGetproductsByNameQuery();
 
@@ -36,19 +44,64 @@ const Products = () => {
 
   // @ts-ignore
   const handleAddToCart = (product) => {
+    const productId = Number(product.id);
+    const timeoutId = zeroBadgeTimeoutsRef.current[productId];
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      delete zeroBadgeTimeoutsRef.current[productId];
+      setZeroBadgeIds((prev) => prev.filter((id) => id !== productId));
+    }
     dispatch(addToCart(product));
     console.log("Product added to cart:", product);
   };
 
   // @ts-ignore
   const handleIncreaseQuantity = (product) => {
-    dispatch(increaseQuantity(product));
+    const itemById = selectedProducts.find(
+      (itemUser) => itemUser.id === product.id,
+    );
+    if (itemById) {
+      dispatch(increaseQuantity(product));
+      return;
+    }
+
+    handleAddToCart(product);
   };
 
   // @ts-ignore
   const handleDecreaseQuantity = (product) => {
+    const productId = Number(product.id);
+    const itemById = selectedProducts.find(
+      (itemUser) => itemUser.id === product.id,
+    );
+    if (itemById?.quantity === 1) {
+      setZeroBadgeIds((prev) =>
+        prev.includes(productId) ? prev : [...prev, productId],
+      );
+
+      if (zeroBadgeTimeoutsRef.current[productId]) {
+        clearTimeout(zeroBadgeTimeoutsRef.current[productId]);
+      }
+
+      // @ts-ignore
+      zeroBadgeTimeoutsRef.current[productId] = setTimeout(() => {
+        setZeroBadgeIds((prev) => prev.filter((id) => id !== productId));
+        delete zeroBadgeTimeoutsRef.current[productId];
+      }, 1000);
+    }
+
     dispatch(decreaseQuantity(product));
   };
+
+  useEffect(() => {
+    const timeouts = zeroBadgeTimeoutsRef.current;
+
+    return () => {
+      Object.values(timeouts).forEach((timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+    };
+  }, []);
 
   if (isLoading) {
     return <CircularWithValueLabel />;
@@ -110,7 +163,7 @@ const Products = () => {
                   {/* Quantity */}
                   {selectedProducts.some(
                     (itemUser) => itemUser.id === product.id,
-                  ) ? (
+                  ) || zeroBadgeIds.includes(Number(product.id)) ? (
                     <Stack
                       direction="row"
                       spacing={{ xs: 1.4, sm: 2 }}
@@ -130,7 +183,7 @@ const Products = () => {
                         badgeContent={
                           selectedProducts.find(
                             (itemUser) => itemUser.id === product.id,
-                          ).quantity
+                          )?.quantity ?? 0
                         }
                         showZero
                       />
