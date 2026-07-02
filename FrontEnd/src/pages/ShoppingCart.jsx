@@ -27,7 +27,6 @@ import {
   increaseQuantity,
   decreaseQuantity,
 } from "../Redux/cartSlice";
-import ProductDetails from "./ProductDetails/ProductDetails.jsx";
 
 /** @typedef {{ id: number, quantity: number, productName?: string, imageLink?: string, price?: number }} CartProduct */
 /** @typedef {{ cart: { selectedProducts: CartProduct[] } }} RootState */
@@ -227,7 +226,6 @@ const ShoppingCart = () => {
           </Button>
         </Card>
       </Container>
-      <ProductDetails />
     </Box>
   );
 };
