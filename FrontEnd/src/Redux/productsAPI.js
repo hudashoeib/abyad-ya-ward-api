@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 // Define a service using a base URL and expected endpoints
 export const productsApi = createApi({
   reducerPath: "productsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://brova.onrender.com" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://abyad-ya-ward-api-6vnr.vercel.app" }),
   endpoints: (builder) => ({
     getproductsByName: builder.query({
       query: (name) => `products`,
@@ -13,7 +13,7 @@ export const productsApi = createApi({
 });
 export const oneproductApi = createApi({
   reducerPath: "oneproductApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://brova.onrender.com/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://abyad-ya-ward-api-6vnr.vercel.app/" }),
   endpoints: (builder) => ({
     getOneProduct: builder.query({
       query: (name) => `products/${name}`,
